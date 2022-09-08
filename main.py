@@ -18,15 +18,18 @@ def main():
 	ds_sensor = ds18x20.DS18X20(onewire.OneWire(ds_pin))
 	roms = ds_sensor.scan()
 	print('Found DS devices: ', roms)
+	roms = ds_sensor.scan()
 
 	while True:
+
 		ds_sensor.convert_temp()
-		i = 0
+		#i = 0
+		utime.sleep_ms(1000) # min of 750ms for 1wire conversion
+
 		for rom in roms:
 			#print(rom)
-			utime.sleep_ms(1000) # min of 750ms for 1wire conversion
 			temp=ds_sensor.read_temp(rom) 
-			print("Relevé de température : ", temp)
+			print("Relevé de température: ", temp)
 
 			payload = "{ \"temperature\" :{ \"value\": "+str(temp)+" }}"
 			#response = urequests.request("POST", url, headers=headers, data=payload)
@@ -40,7 +43,7 @@ def main():
 
 		#mem = gc.mem_free()
 		#print("Free RAM: {0}".format(mem))
-		led.blink(1)
+		#led.blink(1)
 
 		#while i < 5:
 		#	display.display('Temperature',1,1)
@@ -51,10 +54,11 @@ def main():
 		#	i = i+1
 		#
 		#display.display(mem, 20, 5)
-		time.sleep(5)
+		#time.sleep(1)
 		
 		#wifi.disconnect()
 		#deep_sleep.sleep(10000)
+
 
 
 if __name__=="__main__":
