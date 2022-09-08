@@ -1,5 +1,5 @@
 import sys
-import time
+import time,utime
 import machine, onewire, ds18x20, gc
 import urequests 
 import json
@@ -24,6 +24,7 @@ def main():
 		i = 0
 		for rom in roms:
 			#print(rom)
+			utime.sleep_ms(1000) # min of 750ms for 1wire conversion
 			temp=ds_sensor.read_temp(rom) 
 			print("Relevé de température : ", temp)
 
