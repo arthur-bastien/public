@@ -1,5 +1,5 @@
 import sys
-import time,utime
+import time, utime,gc
 import machine, onewire, ds18x20, gc
 import urequests 
 import json
@@ -9,8 +9,8 @@ import wifi, deep_sleep, led, display
 def main():
 	#LED
 	led.blink(1)
-	url = "http://.../thermometre_test"
-	headers = {  'X-Auth-Token': '',  'Content-Type': 'text/plain'}
+	url = "http://***"
+	headers = {  'X-Auth-Token': '',  'Content-Type': ''}
 	#time.sleep(1) 
 
 	# Dallas 1Wire
@@ -21,18 +21,17 @@ def main():
 	roms = ds_sensor.scan()
 
 	while True:
-
-		ds_sensor.convert_temp()
-		#i = 0
-		utime.sleep_ms(1000) # min of 750ms for 1wire conversion
-
 		for rom in roms:
-			#print(rom)
+			ds_sensor.convert_temp()
+			#i = 0
+			utime.sleep_ms(1000) # min of 750ms for 1wire conversion
+
+			print(rom)
 			temp=ds_sensor.read_temp(rom) 
 			print("Relevé de température: ", temp)
 
 			payload = "{ \"temperature\" :{ \"value\": "+str(temp)+" }}"
-			#response = urequests.request("POST", url, headers=headers, data=payload)
+			response = urequests.request("POST", url, headers=headers, data=payload)
 			#print('Requête envoyée')
 			#j = response.text
 			#y = json.loads(j)
@@ -41,8 +40,9 @@ def main():
 			#c = b["status_code"]
 			#print('Code statut : ',c)
 
-		#mem = gc.mem_free()
-		#print("Free RAM: {0}".format(mem))
+		mem = gc.mem_free()
+		print("Free RAM: {0}".format(mem))
+		gc.collect()
 		#led.blink(1)
 
 		#while i < 5:
@@ -54,11 +54,11 @@ def main():
 		#	i = i+1
 		#
 		#display.display(mem, 20, 5)
-		#time.sleep(1)
+		print('wait')
+		time.sleep(5)
 		
 		#wifi.disconnect()
 		#deep_sleep.sleep(10000)
-
 
 
 if __name__=="__main__":
